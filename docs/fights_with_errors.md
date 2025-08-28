@@ -18,7 +18,7 @@ error: failed to push some refs to 'github-ikb:ikbornasovs/devops-portfolio.git'
 
 В коммит попал большой файл из директории которую не нужно коммитить ./.terraform
 для этого добавляем в .gitingnore
-**/.terraform/**
+\*\*/.terraform/\*\*
 
 из коммита нужно удалить кэш 
 ```
