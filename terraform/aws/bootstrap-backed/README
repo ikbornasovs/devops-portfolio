@@ -1,0 +1,4 @@
+# Заметки и рабочие команды по инстансу
+terraform plan -var='aws_region=eu-central-1' -var='aws_profile=yogabo_terraform' -var='bucket_name=tf-state-kb' -var='table_name=tf-locks'
+terraform apply -var='aws_region=eu-central-1' -var='aws_profile=yogabo_terraform' -var='bucket_name=tf-state-kb' -var='table_name=tf-locks'
+terraform destroy -var='aws_region=eu-central-1' -var='aws_profile=yogabo_terraform' -var='bucket_name=tf-state-kb' -var='table_name=tf-locks'
