@@ -20,7 +20,7 @@ error: failed to push some refs to 'github-ikb:ikbornasovs/devops-portfolio.git'
 для этого добавляем в .gitingnore
 \*\*/.terraform/\*\*
 
-из коммита нужно удалить кэш 
+Большие файлы уже в истории
 ```
 sudo apt install git-filter-repo
 git filter-repo --path terraform/aws/bootstrap-backed/.terraform --invert-paths
