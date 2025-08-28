@@ -1,10 +1,28 @@
-# Terraform cache & states
-**/.terraform/**
+# === Terraform ===
+
+# Локальные каталоги и кэш провайдеров
+**/.terraform/*
+
+# Файлы состояния
 *.tfstate
 *.tfstate.*
-.crash.log
+
+# Файл блокировки состояния
+.terraform.tfstate.lock.info
+
+# Логи аварий
+crash.log
+*.crash.log
+
+# Локальные override-файлы
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Кэш terragrunt (если используешь)
 .terragrunt-cache/
 
-# allow lockfile
+# === Исключение ===
+# Этот lock-файл наоборот нужно коммитить, чтобы зафиксировать версии провайдеров
 !**/.terraform.lock.hcl
-
