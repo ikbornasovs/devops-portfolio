@@ -1,0 +1,10 @@
+# Terraform cache & states
+**/.terraform/**
+*.tfstate
+*.tfstate.*
+.crash.log
+.terragrunt-cache/
+
+# allow lockfile
+!**/.terraform.lock.hcl
+
