@@ -1,0 +1,38 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["*"]
+  delete:
+    branches: ["**"]
+    tags: ["*"]
+  workflow_dispatch: {}
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name  "${{ secrets.GIT_AUTHOR_NAME || 'ci-bot' }}"
+          git config user.email "${{ secrets.GIT_AUTHOR_EMAIL || 'ci-bot@users.noreply.github.com' }}"
+
+      - name: Push mirror to GitLab
+        env:
+          GITLAB_URL: ${{ secrets.GITLAB_URL }}    
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          if [ -z "$GITLAB_URL" ] || [ -z "$GITLAB_TOKEN" ]; then
+            echo "Missing secrets GITLAB_URL or GITLAB_TOKEN"; exit 1
+          fi
+          # Встраиваем токен в HTTPS-URL. Пользователь может быть "oauth2".
+          GITLAB_REMOTE="https://oauth2:${GITLAB_TOKEN}@${GITLAB_URL#https://}"
+          git remote add gitlab "$GITLAB_REMOTE" || git remote set-url gitlab "$GITLAB_REMOTE"
+
+          git push --mirror gitlab
