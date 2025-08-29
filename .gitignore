@@ -26,3 +26,5 @@ override.tf.json
 # === Исключение ===
 # Этот lock-файл наоборот нужно коммитить, чтобы зафиксировать версии провайдеров
 !**/.terraform.lock.hcl
+
+progress_of_learning.md

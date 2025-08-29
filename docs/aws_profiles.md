@@ -1,3 +1,13 @@
+AMI best practice 
+- Permission boundary для любых IAM users (если они таки есть). Ограничивай верхнюю границу разрешений.
+- Политики на группу, а не навешивать пачками на каждого пользователя.
+- Теги (Owner, Env, CostCenter) + условия в политиках, привязанные к тэгам.
+- CloudTrail + Access Analyzer — держать включёнными, проверять лишние разрешения.
+- SCP в AWS Organizations — запрещать то, что в принципе не должно выполняться (напр., root-доступ, удаление Trail, создание пользователей и т.п. в прод-аккаунтах).
+- Паролей к консоли лучше избегать для ботов; если уж надо — требовать MFA, ротацию и reset at first login.
+
+---
+
 В AWS CLI/SDK (и, соответственно, в Terraform) “пользователь” или “роль” выбирается через профиль в файлах ~/.aws/credentials и ~/.aws/config.
 
 1. Где хранятся профили
@@ -64,3 +74,4 @@ aws_profile = "dev"
 aws configure list-profiles
 aws configure list --profile dev
 aws sts get-caller-identity --profile dev
+
