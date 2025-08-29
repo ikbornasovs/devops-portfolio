@@ -5,9 +5,7 @@ on:
     branches: ["**"]
     tags: ["*"]
   delete:
-    branches: ["**"]
-    tags: ["*"]
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   mirror:
@@ -23,16 +21,21 @@ jobs:
           git config user.name  "${{ secrets.GIT_AUTHOR_NAME || 'ci-bot' }}"
           git config user.email "${{ secrets.GIT_AUTHOR_EMAIL || 'ci-bot@users.noreply.github.com' }}"
 
-      - name: Push mirror to GitLab
+      - name: Push branches & tags to GitLab (no remote-tracking refs)
         env:
-          GITLAB_URL: ${{ secrets.GITLAB_URL }}    
+          GITLAB_URL: ${{ secrets.GITLAB_URL }}
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
         run: |
-          if [ -z "$GITLAB_URL" ] || [ -z "$GITLAB_TOKEN" ]; then
+          set -euo pipefail
+          if [ -z "${GITLAB_URL:-}" ] || [ -z "${GITLAB_TOKEN:-}" ]; then
             echo "Missing secrets GITLAB_URL or GITLAB_TOKEN"; exit 1
           fi
-          # Встраиваем токен в HTTPS-URL. Пользователь может быть "oauth2".
           GITLAB_REMOTE="https://oauth2:${GITLAB_TOKEN}@${GITLAB_URL#https://}"
           git remote add gitlab "$GITLAB_REMOTE" || git remote set-url gitlab "$GITLAB_REMOTE"
-
-          git push --mirror gitlab
+          git push --prune gitlab 'refs/heads/*:refs/heads/*'
+          git ls-remote --tags gitlab | awk '{print $2}' | sed 's#^refs/tags/##' > /tmp/remote-tags.txt
+          git tag > /tmp/local-tags.txt
+          comm -23 /tmp/remote-tags.txt /tmp/local-tags.txt | while read -r tag; do
+            [ -n "$tag" ] && git push gitlab ":refs/tags/$tag"
+          done
+          git push gitlab --tags
