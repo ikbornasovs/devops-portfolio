@@ -74,4 +74,3 @@ aws_profile = "dev"
 aws configure list-profiles
 aws configure list --profile dev
 aws sts get-caller-identity --profile dev
-
