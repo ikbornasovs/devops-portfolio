@@ -19,4 +19,11 @@ github to gitlab
 - Защищённые ветки в GitLab могут блокировать отправку — поэтому нужно настроить правила защиты веток.
 - Зеркало синхронизирует **только данные Git** (коммиты/ветки/теги). Конфигурации задач/MR/CI не зеркалируются автоматически.
 - Для ручного запуска: **Действия -> Зеркало на GitLab -> Запустить рабочий процесс**.
-- 
+
+### Multi-target mirroring
+This repo mirrors to:
+- GitLab: `$GITLAB_URL`
+- GitHub#2: `$GITHUB2_URL`
+
+Secrets required: `GITLAB_URL`, `GITLAB_TOKEN`, `GITHUB2_URL`, `GITHUB2_TOKEN`.
+Pushes/Deletes trigger syncing of branches and tags to both targets.

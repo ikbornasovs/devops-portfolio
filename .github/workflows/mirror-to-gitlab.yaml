@@ -1,4 +1,4 @@
-name: Mirror to GitLab
+name: Mirror to GitLab & GitHub#2
 
 on:
   push:
@@ -10,6 +10,17 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - name: gitlab
+            url:  ${{ secrets.GITLAB_URL }}
+            token: ${{ secrets.GITLAB_TOKEN }}
+            user: oauth2
+          - name: github2
+            url:  ${{ secrets.GITHUB2_URL }}
+            token: ${{ secrets.GITHUB2_TOKEN }}
+            user: x-access-token
     steps:
       - name: Checkout full history
         uses: actions/checkout@v4
@@ -20,19 +31,29 @@ jobs:
         run: |
           git config user.name  "${{ secrets.GIT_AUTHOR_NAME || 'ci-bot' }}"
           git config user.email "${{ secrets.GIT_AUTHOR_EMAIL || 'ci-bot@users.noreply.github.com' }}"
+      - name: Fetch all branches/tags from origin (GitHub source)
+        run: |
+          set -euo pipefail
+          git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: Push branches & tags to GitLab (safe, all branches)
+      - name: Push branches & tags to ${{ matrix.target.name }}
         env:
-          GITLAB_URL: ${{ secrets.GITLAB_URL }}
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          TARGET_URL:   ${{ matrix.target.url }}
+          TARGET_TOKEN: ${{ matrix.target.token }}
+          TARGET_USER:  ${{ matrix.target.user }}
         run: |
           set -euo pipefail
 
-          GITLAB_REMOTE="https://oauth2:${GITLAB_TOKEN}@${GITLAB_URL#https://}"
-          git remote add gitlab "$GITLAB_REMOTE" || git remote set-url gitlab "$GITLAB_REMOTE"
+          if [ -z "${TARGET_URL:-}" ] || [ -z "${TARGET_TOKEN:-}" ]; then
+            echo "Missing URL/TOKEN for target ${{ matrix.target.name }}"; exit 1
+          fi
 
-          git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
+          AUTH_URL="$(echo "$TARGET_URL" | sed -E "s#^https://#https://${TARGET_USER}:${TARGET_TOKEN}@#")"
 
-          git push --prune gitlab 'refs/remotes/origin/*:refs/heads/*'
+          git remote add "${{ matrix.target.name }}" "$AUTH_URL" || git remote set-url "${{ matrix.target.name }}" "$AUTH_URL"
 
-          git push gitlab --tags
+          git push --prune "${{ matrix.target.name }}" 'refs/remotes/origin/*:refs/heads/*'
+
+          # Пуш тегов
+          git push "${{ matrix.target.name }}" --tags
+
