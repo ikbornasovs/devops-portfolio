@@ -8,8 +8,6 @@
 *.tfstate.*
 terraform.tfstate
 terraform.tfstate.*
-
-# Файл блокировки состояния
 .terraform.tfstate.lock.info
 
 # Логи аварий
