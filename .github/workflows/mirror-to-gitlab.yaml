@@ -26,10 +26,6 @@ jobs:
           set -euo pipefail
           git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      - name: Clear any auth header for github.com
-        run: |
-          git config --global --unset-all http.https://github.com/.extraheader || true
-
       # ---- GitLab ----
       - name: Push to GitLab
         env:
