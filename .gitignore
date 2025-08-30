@@ -3,9 +3,11 @@
 # Локальные каталоги и кэш провайдеров
 **/.terraform/*
 
-# Файлы состояния
+# Terraform state
 *.tfstate
 *.tfstate.*
+terraform.tfstate
+terraform.tfstate.*
 
 # Файл блокировки состояния
 .terraform.tfstate.lock.info
