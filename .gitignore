@@ -20,11 +20,10 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Кэш terragrunt (если используешь)
+# Кэш terragrunt
 .terragrunt-cache/
 
 # === Исключение ===
-# Этот lock-файл наоборот нужно коммитить, чтобы зафиксировать версии провайдеров
 !**/.terraform.lock.hcl
 
 ./docs/progress_of_learning.md
