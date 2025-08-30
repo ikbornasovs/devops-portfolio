@@ -24,6 +24,9 @@ jobs:
           git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
       # ---- Target 1: GitLab ----
+      - name: Remove Actions auth header
+        run: |
+          git config --global --unset-all http.https://github.com/.extraheader || true
       - name: Push to GitLab
         env:
           TARGET_URL:   ${{ secrets.GITLAB_URL }}
@@ -43,6 +46,10 @@ jobs:
           git push gitlab --tags
 
       # ---- Target 2: GitHub  ----
+      - name: Remove Actions auth header
+        run: |
+          git config --global --unset-all http.https://github.com/.extraheader || true
+
       - name: Push to GitHub#2
         env:
           TARGET_URL:   ${{ secrets.GITHUB2_URL }} 
