@@ -27,3 +27,12 @@ This repo mirrors to:
 
 Secrets required: `GITLAB_URL`, `GITLAB_TOKEN`, `GITHUB2_URL`, `GITHUB2_TOKEN`.
 Pushes/Deletes trigger syncing of branches and tags to both targets.
+
+Если целевой репозиторий должен получать workflow-файлы, токен обязан иметь:
+fine-grained: 
+- Actions: Read & write, 
+- Contents: Read & write
+или 
+classic: 
+- repo 
+- workflow
