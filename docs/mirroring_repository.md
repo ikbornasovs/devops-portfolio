@@ -32,6 +32,7 @@ Pushes/Deletes trigger syncing of branches and tags to both targets.
 fine-grained: 
 - Actions: Read & write, 
 - Contents: Read & write
+- Workflow: Read & write
 или 
 classic: 
 - repo 
