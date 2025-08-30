@@ -28,7 +28,8 @@ git filter-repo --path terraform/aws/bootstrap-backed/.terraform --invert-paths
 ! будет предупреждение, в этот раз игнорировать, так как в origin нет этой ветки.
 ```
 git filter-repo --path terraform/aws/bootstrap-backed/.terraform --invert-paths --force
-git push --force-with-lease origin learning_terraform
+# **!!! ВНИМАНИЕ !!! команда перезаписывает репозиторий**
+git push --force-with-lease origin branch_name
 ```
 
 после форсированной очистки удалились и remote, добавляем:
@@ -36,5 +37,6 @@ git push --force-with-lease origin learning_terraform
 git remote -v
 git remote add origin github-ikb:ikbornasovs/devops-portfolio.git
 git remote -v
-git push --force-with-lease origin learning_terraform
+# **!!! ВНИМАНИЕ !!! команда перезаписывает репозиторий**
+git push --force-with-lease origin branch_name
 ```

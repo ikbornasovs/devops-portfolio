@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false   # важно: не добавлять GITHUB_TOKEN для github.com
+          persist-credentials: false
 
       - name: Configure Git identity
         run: |
