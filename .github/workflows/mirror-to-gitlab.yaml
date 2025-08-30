@@ -6,27 +6,31 @@ on:
     tags: ["*"]
   delete:
   workflow_dispatch:
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history
+      - name: Checkout full history (no creds)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Configure Git identity
         run: |
           git config user.name  "${{ secrets.GIT_AUTHOR_NAME || 'ci-bot' }}"
           git config user.email "${{ secrets.GIT_AUTHOR_EMAIL || 'ci-bot@users.noreply.github.com' }}"
+
       - name: Fetch all branches/tags from origin
         run: |
           set -euo pipefail
           git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
 
-      # ---- Target 1: GitLab ----
-      - name: Remove Actions auth header
+      - name: Clear any auth header for github.com
         run: |
           git config --global --unset-all http.https://github.com/.extraheader || true
+
+      # ---- GitLab ----
       - name: Push to GitLab
         env:
           TARGET_URL:   ${{ secrets.GITLAB_URL }}
@@ -34,34 +38,20 @@ jobs:
           TARGET_USER:  oauth2
         run: |
           set -euo pipefail
-          if [ -z "${TARGET_URL:-}" ] || [ -z "${TARGET_TOKEN:-}" ]; then
-            echo "Missing GITLAB_URL or GITLAB_TOKEN"; exit 1
-          fi
           AUTH_URL="$(echo "$TARGET_URL" | sed -E "s#^https://#https://${TARGET_USER}:${TARGET_TOKEN}@#")"
           git remote add gitlab "$AUTH_URL" || git remote set-url gitlab "$AUTH_URL"
-
-          # Ветки: из refs/remotes/origin/* → refs/heads/* на целевом, c безопасным prune
           git push --prune gitlab 'refs/remotes/origin/*:refs/heads/*'
-          # Теги:
           git push gitlab --tags
 
-      # ---- Target 2: GitHub  ----
-      - name: Remove Actions auth header
-        run: |
-          git config --global --unset-all http.https://github.com/.extraheader || true
-
+      # ---- GitHub#2 ----
       - name: Push to GitHub#2
         env:
-          TARGET_URL:   ${{ secrets.GITHUB2_URL }} 
+          TARGET_URL:   ${{ secrets.GITHUB2_URL }}
           TARGET_TOKEN: ${{ secrets.GITHUB2_TOKEN }}
           TARGET_USER:  x-access-token
         run: |
           set -euo pipefail
-          if [ -z "${TARGET_URL:-}" ] || [ -z "${TARGET_TOKEN:-}" ]; then
-            echo "Missing GITHUB2_URL or GITHUB2_TOKEN"; exit 1
-          fi
           AUTH_URL="$(echo "$TARGET_URL" | sed -E "s#^https://#https://${TARGET_USER}:${TARGET_TOKEN}@#")"
           git remote add github2 "$AUTH_URL" || git remote set-url github2 "$AUTH_URL"
-
           git push --prune github2 'refs/remotes/origin/*:refs/heads/*'
           git push github2 --tags
