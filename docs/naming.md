@@ -17,7 +17,7 @@ provider "aws" {
   region  = var.aws_region
   profile = var.aws_profile
 }
-
+```
 ---
 
 ## Backend (state + locks)
@@ -28,6 +28,7 @@ resource "aws_dynamodb_table" "tf_locks" {}
 Это Terraform local names — могут быть любыми.
 tf_state → для бакета, где хранится terraform.tfstate.
 tf_locks → для DynamoDB таблицы блокировок.
+```
 
 ---
 
@@ -38,7 +39,7 @@ resource "aws_subnet" "public_a" {}
 resource "aws_subnet" "public_b" {}
 resource "aws_internet_gateway" "igw" {}
 resource "aws_route_table" "public" {}
-
+```
 - main или primary для основной VPC.
 - Сети и таблицы маршрутов: public_a, private_b.
 - IGW всегда igw, NAT — nat_a, nat_b.
@@ -46,57 +47,72 @@ resource "aws_route_table" "public" {}
 ---
 
 ## Compute (EC2)
+```
 resource "aws_instance" "bastion" {}
 resource "aws_launch_template" "app" {}
-
+```
 - Имя = роль сервера: bastion, web, db.
 - Для групп: asg_web, asg_worker.
 
 ## Балансировщики (LB)
+```
 resource "aws_lb" "public" {}
 resource "aws_lb_target_group" "api" {}
+```
 
 - LB: public, internal.
 - TG: api, web, default.
 
 ## Базы данных
+```
 resource "aws_db_instance" "main" {}
 resource "aws_elasticache_cluster" "redis" {}
+```
 - Имя = тип: main, replica, redis.
 
 ## IAM
+```
 resource "aws_iam_role" "ec2_role" {}
 resource "aws_iam_policy" "s3_access" {}
 resource "aws_iam_user" "ci_user" {}
+```
 
 - Роль = <service>_role (например: ec2_role, eks_role).
 - Политики: s3_access, admin_policy.
 - Пользователи: ci_user, deploy_bot.
 
 ## Outputs
+```
 output "vpc_id" {
   value = aws_vpc.main.id
 }
 output "subnet_ids" {
   value = [for s in aws_subnet.public : s.id]
 }
+```
 - Имена output совпадают с сущностью: vpc_id, subnet_ids, bastion_ip.
 
 ## Переменные
+```
 variable "aws_region" {}
 variable "project_name" {}
 variable "env" {}
+```
 
 - Всегда маленькие буквы, snake_case.
 
 ## Популярные переменные:
+```
 env (dev, stage, prod)
 project_name
 aws_region
 aws_profile
+```
 
 ## Рекомендации
 Внутренние Terraform-имена (aws_vpc.main) → короткие, без env.
 Реальные AWS-имена (tags / name) → с префиксами проекта и окружения:
+```
 "${var.project_name}-${var.env}-vpc"
 "${var.project_name}-${var.env}-bastion"
+```
