@@ -87,3 +87,38 @@ export AWS_PROFILE=dev
 terragrunt init
 terragrunt plan
 ```
+
+### mock_outputs в dependency
+```
+dependency "vpc" {
+  config_path = "../vpc"
+  mock_outputs = {
+    vpc_id            = "vpc-000000"
+    public_subnet_ids = ["subnet-111111"]
+  }
+}
+```
+dependency: «Модуль зависит от другого (../vpc)».
+vpc-000000 и subnet-111111 — просто «заглушки», не существующие ресурсы.
+Настоящие значения Terraform возьмёт из output модуля vpc при apply.
+
+### Destroy
+
+только EC2 (bastion):
+```bash
+cd terraform/aws/envs/dev/bastion
+terragrunt destroy
+```
+
+только VPC:
+```
+cd terraform/aws/envs/dev/vpc
+terragrunt destroy
+```
+
+всё окружение целиком (и VPC, и EC2, и все зависимости):
+```
+cd terraform/aws/envs/dev
+terragrunt run-all destroy
+```
+run-all пойдёт по всем подпапкам с terragrunt.hcl и вызовет destroy в правильном порядке.

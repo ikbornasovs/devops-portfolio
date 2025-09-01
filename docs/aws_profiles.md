@@ -1,4 +1,4 @@
-AMI best practice 
+### AMI best practice 
 - Permission boundary для любых IAM users (если они таки есть). Ограничивай верхнюю границу разрешений.
 - Политики на группу, а не навешивать пачками на каждого пользователя.
 - Теги (Owner, Env, CostCenter) + условия в политиках, привязанные к тэгам.
@@ -74,3 +74,20 @@ aws_profile = "dev"
 aws configure list-profiles
 aws configure list --profile dev
 aws sts get-caller-identity --profile dev
+
+
+### aws_ami
+data source — способ получить данные о существующих ресурсах AWS.
+```hcl
+data "aws_ami" "al2023" {
+  owners      = ["137112412989"]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+}
+```
+owners = ["137112412989"] - Это AWS Account ID владельца образа.
+137112412989 → официальный аккаунт Amazon, в котором публикуются Amazon Linux AMI.
+С таким подходом можно гарантировать что всегда получим актуальный ID AMI Amazon Linux 2023, без жёсткого хардкода.

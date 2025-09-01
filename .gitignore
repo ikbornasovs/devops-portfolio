@@ -27,3 +27,7 @@ override.tf.json
 !**/.terraform.lock.hcl
 
 ./docs/progress_of_learning.md
+
+# SSH keys
+*.pem
+*.key
