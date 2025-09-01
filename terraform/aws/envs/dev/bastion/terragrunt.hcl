@@ -17,7 +17,6 @@ locals {
   ssh_cidr = "84.15.222.29/32"
 }
 
-# Зависимость на VPC Lite
 dependency "vpc" {
   config_path = "../vpc"
   mock_outputs = {
@@ -26,7 +25,6 @@ dependency "vpc" {
   }
 }
 
-# Terraform-код для этого стека
 generate "main" {
   path      = "main.tf"
   if_exists = "overwrite"
