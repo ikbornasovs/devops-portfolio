@@ -12,14 +12,11 @@ locals {
   name          = "${local.project}-${local.env}-bastion"
   instance_type = "t3.micro"
 
-  # замени на своё имя ключа EC2 (созданного заранее в AWS Console или CLI)
   key_name = "my-ec2-key"
 
-  # временно можно поставить свой IP/32. Узнать IP: curl ifconfig.me
   ssh_cidr = "84.15.222.29/32"
 }
 
-# Зависимость на VPC Lite
 dependency "vpc" {
   config_path = "../vpc"
   mock_outputs = {
@@ -28,7 +25,6 @@ dependency "vpc" {
   }
 }
 
-# Terraform-код для этого стека
 generate "main" {
   path      = "main.tf"
   if_exists = "overwrite"
@@ -54,7 +50,6 @@ generate "main" {
   EOF
 }
 
-# Объявляем переменные, которых нет в корне
 generate "variables_env" {
   path      = "variables_env.tf"
   if_exists = "overwrite"
@@ -68,7 +63,6 @@ generate "variables_env" {
   EOF
 }
 
-# Все значения — через inputs
 inputs = {
   aws_region  = local.region
   aws_profile = local.profile
