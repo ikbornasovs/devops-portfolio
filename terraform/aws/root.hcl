@@ -1,7 +1,6 @@
 locals {
-  default_region  = "eu-central-1"
-  default_profile = "dev"
-  project         = "devops-portfolio"
+  project  = "devops-portfolio"
+  ssh_cidr = "84.15.222.29/32"
 }
 
 remote_state {

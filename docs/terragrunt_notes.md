@@ -122,3 +122,5 @@ cd terraform/aws/envs/dev
 terragrunt run-all destroy
 ```
 run-all пойдёт по всем подпапкам с terragrunt.hcl и вызовет destroy в правильном порядке.
+
+для формирования окружения terraform средствами terragrunt можно воспользоваться уже имеющимися окружениями и базировать формирование на уже существующих

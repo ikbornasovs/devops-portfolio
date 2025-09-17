@@ -3,22 +3,8 @@ include "root" {
   expose = true
 }
 
-locals {
-  project = include.root.locals.project
-  env     = "dev"
-  region  = "eu-central-1"
-  profile = "dev"
-
-  name          = "${local.project}-${local.env}-bastion"
-  instance_type = "t3.micro"
-
-  key_name = "my-ec2-key"
-
-  ssh_cidr = "84.15.222.29/32"
-}
-
 dependency "vpc" {
-  config_path = "../vpc"
+  config_path  = "../vpc"
   mock_outputs = {
     vpc_id            = "vpc-000000"
     public_subnet_ids = ["subnet-111111"]
