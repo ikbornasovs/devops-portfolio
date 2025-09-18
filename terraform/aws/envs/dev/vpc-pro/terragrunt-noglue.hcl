@@ -7,7 +7,6 @@ terraform {
   source = "../../../modules/vpc-pro"
 }
 
-# генерим пустой main.tf, если используешь inputs/tfvars — не нужен glue-код
 generate "variables_env" {
   path      = "variables_env.tf"
   if_exists = "overwrite"
