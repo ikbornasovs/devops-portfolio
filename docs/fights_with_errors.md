@@ -1,5 +1,8 @@
+# research notes
+
 при попытке пушить изменения, получил ошибку
-```
+
+```bash
 git push origin learning_terraform
 Enumerating objects: 26, done.
 Counting objects: 100% (26/26), done.
@@ -21,19 +24,23 @@ error: failed to push some refs to 'github-ikb:ikbornasovs/devops-portfolio.git'
 \*\*/.terraform/\*\*
 
 Большие файлы уже в истории
-```
+
+```bash
 sudo apt install git-filter-repo
 git filter-repo --path terraform/aws/bootstrap-backed/.terraform --invert-paths
 ```
+
 ! будет предупреждение, в этот раз игнорировать, так как в origin нет этой ветки.
-```
+
+```bash
 git filter-repo --path terraform/aws/bootstrap-backed/.terraform --invert-paths --force
 # **!!! ВНИМАНИЕ !!! команда перезаписывает репозиторий**
 git push --force-with-lease origin branch_name
 ```
 
 после форсированной очистки удалились и remote, добавляем:
-```
+
+```bash
 git remote -v
 git remote add origin github-ikb:ikbornasovs/devops-portfolio.git
 git remote -v
