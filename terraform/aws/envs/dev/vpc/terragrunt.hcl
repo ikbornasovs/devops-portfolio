@@ -56,7 +56,7 @@ inputs = {
   aws_region  = local.region
   aws_profile = local.profile
 
-  project = local.project   # из корня Terragrunt
+  project = local.project
   env     = local.env
 
   name    = local.name

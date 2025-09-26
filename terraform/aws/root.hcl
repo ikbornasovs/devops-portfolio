@@ -1,14 +1,15 @@
 locals {
   project  = "devops-portfolio"
   ssh_cidr = "84.15.222.29/32"
+  default_region  = get_env("TG_BACKEND_REGION", "eu-central-1")
+  default_profile = get_env("TG_BACKEND_PROFILE", "dev")
 }
 
 remote_state {
   backend = "s3"
   config = {
     bucket         = "my-tf-state-ikb"
-    region         = local.default_region
-    profile        = local.default_profile
+    region         = "eu-central-1"
     dynamodb_table = "my-tf-locks"
     encrypt        = true
     key            = "${path_relative_to_include()}/terraform.tfstate"
@@ -49,8 +50,3 @@ generate "providers" {
   EOF
 }
 
-inputs = {
-  aws_region  = local.default_region
-  aws_profile = local.default_profile
-  project     = local.project
-}
