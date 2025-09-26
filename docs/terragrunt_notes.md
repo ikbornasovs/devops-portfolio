@@ -149,6 +149,30 @@ terragrunt init
 terragrunt plan
 ```
 
+### Plan
+
+#### для всего окружения dev
+
+```bash
+cd terraform/aws/envs/dev
+terragrunt run-all plan
+```
+
+#### только для vpc-pro с захватом общих переменных из окружения dev
+выбран такой способ для возможности хранения общих переменных в окружении и захвата их при запуске только для определённой части плана
+
+```bash
+cd terraform/aws/envs/dev
+terragrunt run-all plan --terragrunt-include-dir vpc-pro # deprecated
+terragrunt plan --all --terragrunt-include-dir vpc-pro
+```
+#### только для vpc-pro
+
+```bash
+cd terraform/aws/envs/dev/vpc-pro
+terragrunt plan
+```
+
 ### Destroy
 
 только EC2 (bastion):
