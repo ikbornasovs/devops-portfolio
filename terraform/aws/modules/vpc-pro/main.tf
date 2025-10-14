@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
 locals {
   common_tags = merge({
     Project = var.project
@@ -21,7 +12,7 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = merge(local.common_tags, {
-    Name = var.name
+    Name = "${var.project}-${var.env}"
   })
 }
 
