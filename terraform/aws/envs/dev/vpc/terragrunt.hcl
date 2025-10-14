@@ -10,7 +10,8 @@ locals {
   region  = "eu-central-1"
   profile = "dev"
 
-  name    = "${local.project}-${local.env}" 
+  name    = "${local.project}-${local.env}"
+
   cidr    = "10.20.0.0/16"
   azs     = ["eu-central-1a", "eu-central-1b"]
   subnets = ["10.20.1.0/24", "10.20.2.0/24"]
@@ -28,7 +29,8 @@ generate "main" {
       project = var.project
       env     = var.env
 
-      name    = var.name
+      name    = "${var.project}-${var.env}-vpc-pro"
+
       cidr    = var.cidr
       azs     = var.azs
       subnets = var.subnets
@@ -36,19 +38,6 @@ generate "main" {
 
     output "vpc_id"            { value = module.vpc_lite.vpc_id }
     output "public_subnet_ids" { value = module.vpc_lite.public_subnet_ids }
-  EOF
-}
-
-generate "variables_env" {
-  path      = "variables_env.tf"
-  if_exists = "overwrite"
-  contents  = <<-EOF
-    variable "project" { type = string }
-    variable "env"     { type = string }
-    variable "name"    { type = string }
-    variable "cidr"    { type = string }
-    variable "azs"     { type = list(string) }
-    variable "subnets" { type = list(string) }
   EOF
 }
 

@@ -47,3 +47,57 @@ git remote -v
 # **!!! ВНИМАНИЕ !!! команда перезаписывает репозиторий**
 git push --force-with-lease origin branch_name
 ```
+
+## Error: Error acquiring the state lock
+
+```bash
+ Error message: operation error DynamoDB: PutItem, https response error
+  │ StatusCode: 400, RequestID:
+  │ P6MFR1L78PE3BA3NH303R136BBVV4KQNSO5AEMVJF66Q9ASUAAJG,
+  │ ConditionalCheckFailedException: The conditional request failed
+  │ Lock Info:
+  │   ID:        166548c2-710f-a50c-7667-cd474bfde175
+  │   Path:      my-tf-state-ikb/envs/dev/vpc-pro/terraform.tfstate
+  │   Operation: OperationTypePlan
+  │   Who:       bo@yogabo
+  │   Version:   1.13.1
+  │   Created:   2025-09-26 08:57:33.679025608 +0000 UTC
+  │   Info:
+  │
+  │
+  │ Terraform acquires a state lock to protect the state from being written
+  │ by multiple users at the same time. Please resolve the issue above and try
+  │ again. For most commands, you can disable locking with the "-lock=false"
+  │ flag, but this is not recommended.
+```
+
+«залипший» лок в DynamoDB для ключа
+my-tf-state-ikb/envs/dev/vpc-pro/terraform.tfstate с ID 166548c2-710f-a50c-7667-cd474bfde175.
+
+### решение
+
+#### чтобы backend точно совпал
+
+```bash
+aws dynamodb delete-item --table-name my-tf-locks --key '{"LockID":{"S":"my-tf-state-ikb/envs/dev/vpc-pro/terraform.tfstate"}}'
+terragrunt init -reconfigure # чтобы backend точно совпал
+terraform force-unlock -force 166548c2-710f-a50c-7667-cd474bfde175 # снять лок
+```
+
+далее plan
+
+## AWS credentials
+
+```bash
+21:08:47.386 ERROR  Error finding AWS credentials (did you set the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables?): operation error STS: GetCallerIdentity, get identity: get credentials: failed to refresh cached credentials, no EC2 IMDS role found, operation error ec2imds: GetMetadata, request canceled, context deadline exceeded
+21:08:47.398 ERROR  Unable to determine underlying exit code, so Terragrunt will exit with error code 1
+21:08:47.402 ERROR  Suggested fixes:
+Missing AWS credentials. Provide credentials to proceed.
+```
+
+### решение
+
+```bash
+export AWS_SDK_LOAD_CONFIG=1
+export AWS_PROFILE=dev
+```

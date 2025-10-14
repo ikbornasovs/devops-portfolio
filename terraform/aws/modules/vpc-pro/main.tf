@@ -12,7 +12,7 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = merge(local.common_tags, {
-    Name = var.name
+    Name = "${var.project}-${var.env}"
   })
 }
 
